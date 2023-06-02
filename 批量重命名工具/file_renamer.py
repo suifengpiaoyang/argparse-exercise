@@ -1,12 +1,11 @@
 """
 当然！我很乐意再为您布置一个稍微更具挑战性的任务，旨在进一步提高您对 argparse 的熟练程度。
 
-任务描述：
-
 创建一个命令行工具，用于批量重命名文件。该工具将提供以下功能：
 
     支持指定一个或多个文件夹路径，并按照指定规则重命名文件。
     支持指定文件名的搜索模式，并仅对匹配的文件进行重命名。
+    支持使用通配符模式或正则表达式模式进行文件名匹配。
     支持指定重命名规则，包括替换、添加前缀或后缀等操作。
 
 要求：
@@ -20,10 +19,12 @@
         -a/--add-prefix：添加前缀。指定一个字符串，在匹配到的文件名前添加该前缀。
         -b/--add-suffix：添加后缀。指定一个字符串，在匹配到的文件名后添加该后缀。
         --dry-run：演示模式。执行命令时不实际重命名文件，而是显示重命名的结果。
+        --regex：使用正则表达式模式进行文件名匹配。默认使用通配符模式。
     如果指定了搜索模式，将只对匹配到的文件进行重命名操作。
     如果指定了替换、添加前缀或添加后缀中的任何一个或多个选项，则将根据指定的规则对文件进行重命名。
-    可以使用正则表达式进行更复杂的匹配和替换操作。
     如果使用了 --dry-run 演示模式，则不实际重命名文件，而是显示重命名的结果。
+
+通过增加 --regex 选项，用户可以显式指定使用正则表达式模式进行文件名匹配，而默认情况下将使用通配符模式。
 
 以下是一个示例输入和输出的演示：
 
@@ -66,15 +67,18 @@ parser.add_argument('path',
 parser.add_argument('-s',
                     '--search',
                     help='search mode, this parameter must be specified.')
-match_group = parser.add_mutually_exclusive_group()
-match_group.add_argument('-w',
-                         '--wildcard',
-                         action='store_true',
-                         help='Use wildcard pattern, default match pattern')
-match_group.add_argument('-r',
-                         '--regex',
-                         action='store_true',
-                         help='Use regular expression pattern')
+parser.add_argument('-r',
+                    '--replace',
+                    nargs=2,
+                    metavar=('PATTERN', 'REPLACE_TEXT'),
+                    help='Replace mode, you must input two values, '
+                    'first is match pattern, second is replace text. '
+                    'You can use --regex to use regex')
+parser.add_argument('--regex',
+                    action='store_true',
+                    help='Use regular expression pattern, the '
+                    'default match pattern is wildcard. This '
+                         'parameter will affect -s and -r')
 parser.add_argument('-a',
                     '--add-prefix',
                     help='add prefix for files')
@@ -97,8 +101,6 @@ pattern = args.search
 dry_run = args.dry_run
 if args.regex:
     match_mode = 'regex'
-elif args.wildcard:
-    match_mode = 'wildcard'
 else:
     match_mode = 'wildcard'
 for folder in args.path:
@@ -128,6 +130,12 @@ for folder in args.path:
                 new_file = head + args.add_suffix + '.' + tail
             else:
                 new_file += args.add_suffix
+        if args.replace:
+            if match_mode == 'wildcard':
+                new_file = new_file.replace(*args.replace)
+            elif match_mode == 'regex':
+                rpattern, repl = args.replace
+                new_file = re.sub(rf'{rpattern}', repl, new_file)
         if new_file == file:
             print(f'{index}. {file}')
         else:
