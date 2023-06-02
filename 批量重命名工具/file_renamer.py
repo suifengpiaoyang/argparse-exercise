@@ -28,13 +28,13 @@
 
 以下是一个示例输入和输出的演示：
 
-$ python file_renamer.py -p folder -s "*.txt" -r "_new" --dry-run
+$ python file_renamer.py -p folder -s "*.txt" -r "file" "file_new_" --dry-run
 Renaming files in folder: folder
 
 Matched files:
-1. file1.txt -> file1_new.txt
-2. file2.txt -> file2_new.txt
-3. file3.txt -> file3_new.txt
+1. file1.txt -> file_new_1.txt
+2. file2.txt -> file_new_2.txt
+3. file3.txt -> file_new_3.txt
 
 Dry run completed. No files were actually renamed.
 
