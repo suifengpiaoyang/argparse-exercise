@@ -1,0 +1,10 @@
+[2023-05-30 12:45:23] DEBUG: This is a debug message
+[2023-05-30 12:46:10] INFO: Informational message
+[2023-05-30 12:47:55] ERROR: Something went wrong
+[2023-05-30 12:48:21] DEBUG: Another debug message
+[2023-05-30 12:49:03] ERROR: Another error occurred
+[2023-05-30 12:50:18] WARNING: This is a warning
+[2023-05-30 12:51:09] INFO: More informational messages
+[2023-05-30 12:52:37] ERROR: Yet another error
+[2023-05-30 12:53:02] ERROR: One more error
+[2023-05-30 12:54:29] DEBUG: Debugging again
